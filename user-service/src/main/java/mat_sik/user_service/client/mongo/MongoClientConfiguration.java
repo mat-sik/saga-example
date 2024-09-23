@@ -25,7 +25,7 @@ public class MongoClientConfiguration {
 
     private static MongoCredential[] getMongoCredentials(MongoClientProperties mongoClientProperties) {
         String login = mongoClientProperties.login();
-        String database = mongoClientProperties.database();
+        String database = mongoClientProperties.authDatabase();
         char[] password = mongoClientProperties.password();
 
         MongoCredential credential = MongoCredential.createCredential(login, database, password);

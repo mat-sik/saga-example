@@ -7,4 +7,5 @@ mongo:
   port: 27017
   login: admin
   password: pass
-  database: admin
+  authDatabase: admin
+  database: user-service-db
