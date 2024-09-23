@@ -1,0 +1,10 @@
+spring:
+  application:
+  name: user-service
+
+mongo:
+  host: localhost
+  port: 27017
+  login: admin
+  password: pass
+  database: admin
