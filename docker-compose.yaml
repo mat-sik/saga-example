@@ -1,0 +1,79 @@
+services:
+  rabbit-1:
+    image: rabbitmq:3.13.6-management-alpine
+    container_name: rabbit-1
+    hostname: rabbit-1 
+    networks:
+      - net
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment: &rabbit-env
+      - RABBITMQ_ERLANG_COOKIE=rabbitcluster
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=pass
+    volumes:
+      - rabbitmq-1-data:/var/lib/rabbitmq
+  rabbit-2:
+    image: rabbitmq:3.13.6-management-alpine
+    container_name: rabbit-2
+    hostname: rabbit-2
+    networks:
+      - net
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    environment: *rabbit-env
+    volumes:
+      - rabbitmq-2-data:/var/lib/rabbitmq
+  rabbit-3:
+    image: rabbitmq:3.13.6-management-alpine
+    container_name: rabbit-3
+    hostname: rabbit-3
+    networks:
+      - net
+    ports:
+      - "5674:5672"
+      - "15674:15672"
+    environment: *rabbit-env
+    volumes:
+      - rabbitmq-3-data:/var/lib/rabbitmq
+
+  user-service-mongo:
+    image: mongo:8.0.0
+    container_name: user-service-mongo
+    hostname: user-service-mongo
+    networks:
+      - net
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+      - MONGO_INITDB_ROOT_DATABASE=user-service-db
+    volumes:
+      - user-service-mongo-db-data:/data/db
+      - user-service-mongo-db-config:/data/configdb
+  mongo-express:
+    image: mongo-express
+    container_name: user-service-mongo-express
+    restart: always
+    networks:
+      - net
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=pass
+      - ME_CONFIG_MONGODB_SERVER=user-service-mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+
+volumes:
+  rabbitmq-1-data:
+  rabbitmq-2-data:
+  rabbitmq-3-data:
+  user-service-mongo-db-data:
+  user-service-mongo-db-config:
+
+networks:
+  net:
