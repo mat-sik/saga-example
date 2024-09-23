@@ -9,3 +9,9 @@ mongo:
   password: pass
   authDatabase: admin
   database: user-service-db
+
+rabbit:
+  user: admin
+  password: pass
+  virtualHost: /
+  nodeAddresses: localhost:5672,localhost:5673,localhost:5674

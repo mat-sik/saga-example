@@ -1,17 +1,17 @@
 package mat_sik.user_service;
 
-import com.mongodb.client.MongoClient;
-import mat_sik.user_service.user.User;
-import mat_sik.user_service.user.UserRepository;
-import org.bson.types.ObjectId;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.AmqpTemplate;
+import org.springframework.amqp.core.Queue;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
-import java.util.Optional;
 
 @SpringBootApplication
 @ConfigurationPropertiesScan
@@ -23,20 +23,13 @@ public class UserServiceApplication {
     }
 
     @Bean
-    public CommandLineRunner commandLineRunner(MongoClient client, UserRepository repository) {
+    public CommandLineRunner commandLineRunner(ConnectionFactory connectionFactory) {
         return _ -> {
-            client.listDatabaseNames().forEach(System.out::println);
-
-            ObjectId id = ObjectId.get();
-            User newUser = new User(id, "name", "surname");
-
-            repository.save(newUser);
-
-            Optional<User> opUser = repository.findById(id);
-            opUser.ifPresentOrElse(
-                    user -> System.out.println("User: " + user + " was found"),
-                    () -> System.out.println("User was not found")
-            );
+            AmqpAdmin admin = new RabbitAdmin(connectionFactory);
+            admin.declareQueue(new Queue("myqueue"));
+            AmqpTemplate template = new RabbitTemplate(connectionFactory);
+            template.convertAndSend("myqueue", "foo");
+            String foo = (String) template.receiveAndConvert("myqueue");
         };
     }
 
