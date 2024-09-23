@@ -15,3 +15,12 @@ rabbit:
   password: pass
   virtualHost: /
   nodeAddresses: localhost:5672,localhost:5673,localhost:5674
+  topology:
+    create-user:
+      exchangeName: exchange-create-user
+      queueName: queue-create-user
+      routingKey: user.new
+    delete-user:
+      exchangeName: exchange-delete-user
+      queueName: queue-delete-user
+      routingKey: user.delete
