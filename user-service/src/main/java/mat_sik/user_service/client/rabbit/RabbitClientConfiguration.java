@@ -1,6 +1,9 @@
 package mat_sik.user_service.client.rabbit;
 
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory;
+import org.springframework.amqp.rabbit.connection.ConnectionFactory;
+import org.springframework.amqp.rabbit.core.RabbitAdmin;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -38,4 +41,15 @@ public class RabbitClientConfiguration {
 
         return factory;
     }
+
+    @Bean
+    public RabbitAdmin rabbitAdmin(ConnectionFactory factory) {
+        return new RabbitAdmin(factory);
+    }
+
+    @Bean
+    public RabbitTemplate rabbitTemplate(ConnectionFactory factory) {
+        return new RabbitTemplate(factory);
+    }
+
 }
