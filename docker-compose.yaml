@@ -54,7 +54,7 @@ services:
     volumes:
       - user-service-mongo-db-data:/data/db
       - user-service-mongo-db-config:/data/configdb
-  mongo-express:
+  user-service-mongo-express:
     image: mongo-express
     container_name: user-service-mongo-express
     restart: always
@@ -68,12 +68,43 @@ services:
       - ME_CONFIG_MONGODB_SERVER=user-service-mongo
       - ME_CONFIG_MONGODB_PORT=27017
 
+  auth-service-mongo:
+    image: mongo:8.0.0
+    container_name: auth-service-mongo
+    hostname: auth-service-mongo
+    networks:
+      - net
+    ports:
+      - "27018:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=pass
+      - MONGO_INITDB_ROOT_DATABASE=auth-service-db
+    volumes:
+      - auth-service-mongo-db-data:/data/db
+      - auth-service-mongo-db-config:/data/configdb
+  auth-service-mongo-express:
+    image: mongo-express
+    container_name: auth-service-mongo-express
+    restart: always
+    networks:
+      - net
+    ports:
+      - "8082:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=pass
+      - ME_CONFIG_MONGODB_SERVER=auth-service-mongo
+      - ME_CONFIG_MONGODB_PORT=27017
+
 volumes:
   rabbitmq-1-data:
   rabbitmq-2-data:
   rabbitmq-3-data:
   user-service-mongo-db-data:
   user-service-mongo-db-config:
+  auth-service-mongo-db-data:
+  auth-service-mongo-db-config:
 
 networks:
   net:

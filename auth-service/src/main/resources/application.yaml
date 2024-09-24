@@ -1,3 +1,11 @@
 spring:
   application:
     name: auth-service
+
+mongo:
+  host: localhost
+  port: 27018
+  login: admin
+  password: pass
+  authDatabase: admin
+  database: auth-service-db
