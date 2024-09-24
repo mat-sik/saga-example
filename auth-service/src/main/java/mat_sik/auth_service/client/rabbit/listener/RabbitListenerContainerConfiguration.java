@@ -1,5 +1,6 @@
 package mat_sik.auth_service.client.rabbit.listener;
 
+import mat_sik.auth_service.auth.controller.create.CreateUserMessageListener;
 import mat_sik.auth_service.auth.controller.delete.DeleteUserMessageListener;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
@@ -18,6 +19,22 @@ public class RabbitListenerContainerConfiguration {
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer createUserListenerContainer(
+            ConnectionFactory factory,
+            ExecutorService executorService,
+            @Qualifier("createUserQueue") Queue queue,
+            CreateUserMessageListener messageListener
+    ) {
+        var container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(factory);
+        container.setTaskExecutor(executorService);
+        container.setQueues(queue);
+        container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        container.setMessageListener(messageListener);
+        return container;
     }
 
     @Bean
