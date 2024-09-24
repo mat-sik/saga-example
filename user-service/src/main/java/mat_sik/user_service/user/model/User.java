@@ -1,4 +1,4 @@
-package mat_sik.user_service.user;
+package mat_sik.user_service.user.model;
 
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
