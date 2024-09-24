@@ -1,8 +1,7 @@
-package mat_sik.user_service.user.controller;
+package mat_sik.user_service.user.controller.create;
 
 import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
-import mat_sik.user_service.user.controller.message.CreateUserMessage;
 import mat_sik.user_service.user.model.User;
 import mat_sik.user_service.user.service.UserService;
 import org.bson.types.ObjectId;

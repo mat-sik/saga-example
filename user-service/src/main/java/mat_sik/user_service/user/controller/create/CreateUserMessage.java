@@ -1,4 +1,4 @@
-package mat_sik.user_service.user.controller.message;
+package mat_sik.user_service.user.controller.create;
 
 import org.bson.types.ObjectId;
 

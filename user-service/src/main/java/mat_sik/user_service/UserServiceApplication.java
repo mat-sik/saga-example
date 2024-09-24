@@ -1,6 +1,6 @@
 package mat_sik.user_service;
 
-import mat_sik.user_service.user.controller.message.CreateUserMessage;
+import mat_sik.user_service.user.controller.create.CreateUserMessage;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
