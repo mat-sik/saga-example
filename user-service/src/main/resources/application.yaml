@@ -20,6 +20,10 @@ rabbit:
       exchangeName: exchange-create-user
       queueName: queue-create-user
       routingKey: user.new
+    continue-transaction-create-user:
+      exchangeName: exchange-continue-create-user
+      queueName: queue-continue-create-user
+      routingKey: user.new.continue
     delete-user:
       exchangeName: exchange-delete-user
       queueName: queue-delete-user
