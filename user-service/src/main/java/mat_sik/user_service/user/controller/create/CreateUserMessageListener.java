@@ -33,7 +33,7 @@ public class CreateUserMessageListener implements ChannelAwareMessageListener {
         String firstname = createUserMessage.firstname();
         String lastname = createUserMessage.lastname();
 
-        service.createUser(new User(id, firstname, lastname));
+        service.save(new User(id, firstname, lastname));
 
         channel.basicAck(deliveryTag, MULTIPLE_ACK);
     }

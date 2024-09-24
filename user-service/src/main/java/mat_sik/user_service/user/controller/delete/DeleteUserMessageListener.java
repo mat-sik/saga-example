@@ -28,7 +28,7 @@ public class DeleteUserMessageListener implements ChannelAwareMessageListener {
 
         ObjectId id = deleteUserMessage.id();
 
-        service.deleteUser(id);
+        service.deleteById(id);
 
         channel.basicAck(deliveryTag, MULTIPLE_ACK);
     }

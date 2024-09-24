@@ -12,11 +12,11 @@ public class UserService {
 
     private final UserRepository repository;
 
-    public User createUser(User user) {
+    public User save(User user) {
         return repository.save(user);
     }
 
-    public void deleteUser(ObjectId id) {
+    public void deleteById(ObjectId id) {
         repository.deleteById(id);
     }
 }
