@@ -9,3 +9,22 @@ mongo:
   password: pass
   authDatabase: admin
   database: auth-service-db
+
+rabbit:
+  user: admin
+  password: pass
+  virtualHost: /
+  nodeAddresses: localhost:5672,localhost:5673,localhost:5674
+  topology:
+    create-user:
+      exchangeName: exchange-create-user
+      queueName: queue-create-user
+      routingKey: user.new
+    compensate-create-user:
+      exchangeName: exchange-compensate-create-user
+      queueName: queue-compensate-create-user
+      routingKey: user.compensate
+    delete-user:
+      exchangeName: exchange-delete-user
+      queueName: queue-delete-user
+      routingKey: user.delete
