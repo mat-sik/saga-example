@@ -1,6 +1,7 @@
 package mat_sik.user_service.client.rabbit.listener;
 
 import mat_sik.user_service.user.controller.create.CreateUserMessageListener;
+import mat_sik.user_service.user.controller.delete.DeleteUserMessageListener;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
@@ -26,6 +27,22 @@ public class RabbitListenerContainerConfiguration {
             ExecutorService executorService,
             @Qualifier("createUserQueue") Queue queue,
             CreateUserMessageListener messageListener
+    ) {
+        var container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(factory);
+        container.setTaskExecutor(executorService);
+        container.setQueues(queue);
+        container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        container.setMessageListener(messageListener);
+        return container;
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer deleteUserListenerContainer(
+            ConnectionFactory factory,
+            ExecutorService executorService,
+            @Qualifier("deleteUserQueue") Queue queue,
+            DeleteUserMessageListener messageListener
     ) {
         var container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(factory);
