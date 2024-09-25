@@ -2,7 +2,6 @@ package mat_sik.saga_orchestrator.client.rabbit.topology;
 
 import mat_sik.saga_orchestrator.client.rabbit.topology.property.AuthDirectExchangeTopologyConfigurationProperty;
 import mat_sik.saga_orchestrator.client.rabbit.topology.property.ExchangeConfig;
-import mat_sik.saga_orchestrator.client.rabbit.topology.property.OrchestratorDirectExchangeTopologyConfigurationProperty;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;

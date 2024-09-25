@@ -63,7 +63,8 @@ public class CreateUserMessageListener implements ChannelAwareMessageListener {
     }
 
     public void performLocalTransaction(ContinueCreateUserMessage continueCreateUserMessage) {
-        ObjectId id = continueCreateUserMessage.id();
+        String hex = continueCreateUserMessage.id();
+        ObjectId id = new ObjectId(hex);
         String username = continueCreateUserMessage.username();
         String email = continueCreateUserMessage.email();
         String password = continueCreateUserMessage.password();
@@ -72,9 +73,8 @@ public class CreateUserMessageListener implements ChannelAwareMessageListener {
     }
 
     public void compensateDistributedTransaction(ContinueCreateUserMessage continueCreateUserMessage) {
-        ObjectId id = continueCreateUserMessage.id();
-
-        var compensateTransactionMessage = new InitiateCreateUserCompensationTransactionMessage(id);
+        String hex = continueCreateUserMessage.id();
+        var compensateTransactionMessage = new InitiateCreateUserCompensationTransactionMessage(hex);
 
         template.setMessageConverter(converter);
         template.setExchange(compensateTransactionBinding.getExchange());

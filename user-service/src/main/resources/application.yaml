@@ -21,8 +21,8 @@ rabbit:
         name: user-service-user
         queues:
           create:
-           name: user-service-create-user-start
-           routingKey: user-service.user.create.start
+            name: user-service-create-user-start
+            routingKey: user-service.user.create.start
           create-continue-transaction:
             name: user-service-create-user-continue
             routingKey: user-service.user.create.continue

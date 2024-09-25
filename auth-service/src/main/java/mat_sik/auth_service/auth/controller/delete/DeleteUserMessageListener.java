@@ -26,7 +26,8 @@ public class DeleteUserMessageListener implements ChannelAwareMessageListener {
 
         var deleteUserMessage = (DeleteUserMessage) converter.fromMessage(message, DeleteUserMessage.class);
 
-        ObjectId id = deleteUserMessage.id();
+        String hex = deleteUserMessage.id();
+        ObjectId id = new ObjectId(hex);
 
         service.deleteById(id);
 
