@@ -1,5 +1,7 @@
 package mat_sik.saga_orchestrator.client.rabbit.listener;
 
+import mat_sik.saga_orchestrator.user.controller.create.compensate.InitiateCreateUserCompensationTransactionMessageListener;
+import mat_sik.saga_orchestrator.user.controller.create.next.ContinueCreateUserMessageListener;
 import mat_sik.saga_orchestrator.user.controller.create.start.CreateUserMessageListener;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
@@ -26,6 +28,38 @@ public class RabbitListenerContainerConfiguration {
             ExecutorService executorService,
             @Qualifier("orchestratorCreateUserQueue") Queue queue,
             CreateUserMessageListener messageListener
+    ) {
+        var container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(factory);
+        container.setTaskExecutor(executorService);
+        container.setQueues(queue);
+        container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        container.setMessageListener(messageListener);
+        return container;
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer continueCreateUserListenerContainer(
+            ConnectionFactory factory,
+            ExecutorService executorService,
+            @Qualifier("createUserContinueTransactionQueue") Queue queue,
+            ContinueCreateUserMessageListener messageListener
+    ) {
+        var container = new SimpleMessageListenerContainer();
+        container.setConnectionFactory(factory);
+        container.setTaskExecutor(executorService);
+        container.setQueues(queue);
+        container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
+        container.setMessageListener(messageListener);
+        return container;
+    }
+
+    @Bean
+    public SimpleMessageListenerContainer compensateCreateUserListenerContainer(
+            ConnectionFactory factory,
+            ExecutorService executorService,
+            @Qualifier("initiateCreateAuthCompensateTransactionQueue") Queue queue,
+            InitiateCreateUserCompensationTransactionMessageListener messageListener
     ) {
         var container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(factory);
