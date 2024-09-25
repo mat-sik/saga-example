@@ -16,14 +16,14 @@ import java.util.Map;
 public class TopologyBuilder {
 
     @Getter
-    private final DirectExchange userDirectExchange;
+    private final DirectExchange directExchange;
 
     private final Map<String, Queue> queues;
     private final Map<String, Binding> bindings;
 
     public TopologyBuilder(ExchangeConfig exchangeConfig) {
         String exchangeName = exchangeConfig.name();
-        this.userDirectExchange = buildDirectExchange(exchangeName);
+        this.directExchange = buildDirectExchange(exchangeName);
 
         this.queues = new HashMap<>();
         this.bindings = new HashMap<>();
@@ -35,7 +35,7 @@ public class TopologyBuilder {
             queues.put(name, queue);
 
             String routingKey = config.routingKey();
-            Binding binding = buildBinding(queue, userDirectExchange, routingKey);
+            Binding binding = buildBinding(queue, directExchange, routingKey);
             bindings.put(name, binding);
         });
     }

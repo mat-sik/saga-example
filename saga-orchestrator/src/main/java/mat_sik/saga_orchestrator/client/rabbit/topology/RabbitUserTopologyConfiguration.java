@@ -24,7 +24,7 @@ public class RabbitUserTopologyConfiguration {
 
     @Bean
     public DirectExchange userDirectExchange() {
-        return topologyBuilder.getUserDirectExchange();
+        return topologyBuilder.getDirectExchange();
     }
 
     @Bean

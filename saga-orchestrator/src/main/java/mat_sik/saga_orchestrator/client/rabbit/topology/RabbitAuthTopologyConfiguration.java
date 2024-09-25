@@ -24,7 +24,7 @@ public class RabbitAuthTopologyConfiguration {
 
     @Bean
     public DirectExchange authDirectExchange() {
-        return topologyBuilder.getUserDirectExchange();
+        return topologyBuilder.getDirectExchange();
     }
 
     @Bean
