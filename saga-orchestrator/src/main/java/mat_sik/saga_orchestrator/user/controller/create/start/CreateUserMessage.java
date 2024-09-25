@@ -1,4 +1,4 @@
-package mat_sik.saga_orchestrator.user.controller.create;
+package mat_sik.saga_orchestrator.user.controller.create.start;
 
 import org.bson.types.ObjectId;
 

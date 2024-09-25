@@ -1,7 +1,8 @@
-package mat_sik.saga_orchestrator.user.controller.create;
+package mat_sik.saga_orchestrator.user.controller.create.compensate;
 
 import com.rabbitmq.client.Channel;
 import lombok.extern.java.Log;
+import org.bson.types.ObjectId;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Log
-public class CreateUserMessageListener implements ChannelAwareMessageListener {
+public class InitiateCreateUserCompensationTransactionMessageListener implements ChannelAwareMessageListener {
 
     private static final boolean MULTIPLE_ACK = false;
     private static final boolean REQUEUE = true;
@@ -22,10 +23,10 @@ public class CreateUserMessageListener implements ChannelAwareMessageListener {
     private final RabbitTemplate template;
     private final Binding createUserBinding;
 
-    public CreateUserMessageListener(
+    public InitiateCreateUserCompensationTransactionMessageListener(
             Jackson2JsonMessageConverter converter,
             RabbitTemplate template,
-            @Qualifier("createUserBinding") Binding createUserBinding
+            @Qualifier("userDeleteBinding") Binding createUserBinding
     ) {
         this.converter = converter;
         this.template = template;
@@ -37,10 +38,13 @@ public class CreateUserMessageListener implements ChannelAwareMessageListener {
         MessageProperties messageProperties = message.getMessageProperties();
         long deliveryTag = messageProperties.getDeliveryTag();
 
-        var createUserMessage = (CreateUserMessage) converter.fromMessage(message, CreateUserMessage.class);
+        var compensationTransactionMessage = (InitiateCreateUserCompensationTransactionMessage) converter.fromMessage(
+                message,
+                InitiateCreateUserCompensationTransactionMessage.class
+        );
 
         try {
-            sendMessage(createUserMessage);
+            sendMessage(compensationTransactionMessage);
             channel.basicAck(deliveryTag, MULTIPLE_ACK);
         } catch (Exception ex) {
             channel.basicNack(deliveryTag, MULTIPLE_ACK, REQUEUE);
@@ -48,11 +52,13 @@ public class CreateUserMessageListener implements ChannelAwareMessageListener {
         }
     }
 
-    private void sendMessage(CreateUserMessage createUserMessage) {
+    private void sendMessage(InitiateCreateUserCompensationTransactionMessage compensationTransactionMessage) {
+        ObjectId id = compensationTransactionMessage.id();
+        var message = new DeleteUserMessage(id);
+
         template.setMessageConverter(converter);
         template.setExchange(createUserBinding.getExchange());
         template.setRoutingKey(createUserBinding.getRoutingKey());
-        template.convertAndSend(createUserMessage);
+        template.convertAndSend(message);
     }
-
 }

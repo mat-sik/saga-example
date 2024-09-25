@@ -1,6 +1,6 @@
 package mat_sik.saga_orchestrator.client.rabbit.listener;
 
-import mat_sik.saga_orchestrator.user.controller.create.CreateUserMessageListener;
+import mat_sik.saga_orchestrator.user.controller.create.start.CreateUserMessageListener;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;

@@ -1,4 +1,4 @@
-package mat_sik.saga_orchestrator.user.controller.create;
+package mat_sik.saga_orchestrator.user.controller.create.next;
 
 import com.rabbitmq.client.Channel;
 import lombok.extern.java.Log;
