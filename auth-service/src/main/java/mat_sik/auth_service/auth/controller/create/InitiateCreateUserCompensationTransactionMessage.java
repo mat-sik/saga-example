@@ -1,4 +1,6 @@
 package mat_sik.auth_service.auth.controller.create;
 
-public record InitiateCreateUserCompensationTransactionMessage(String id) {
+import org.bson.types.ObjectId;
+
+public record InitiateCreateUserCompensationTransactionMessage(ObjectId id) {
 }

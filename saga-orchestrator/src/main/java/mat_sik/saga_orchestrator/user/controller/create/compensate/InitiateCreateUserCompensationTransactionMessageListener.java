@@ -2,6 +2,7 @@ package mat_sik.saga_orchestrator.user.controller.create.compensate;
 
 import com.rabbitmq.client.Channel;
 import lombok.extern.java.Log;
+import org.bson.types.ObjectId;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
@@ -52,8 +53,8 @@ public class InitiateCreateUserCompensationTransactionMessageListener implements
     }
 
     private void sendMessage(InitiateCreateUserCompensationTransactionMessage compensationTransactionMessage) {
-        String hex = compensationTransactionMessage.id();
-        var message = new DeleteUserMessage(hex);
+        ObjectId id = compensationTransactionMessage.id();
+        var message = new DeleteUserMessage(id);
 
         template.setMessageConverter(converter);
         template.setExchange(createUserBinding.getExchange());
