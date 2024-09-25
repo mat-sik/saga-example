@@ -2,6 +2,7 @@ package mat_sik.saga_orchestrator.user.controller.create;
 
 import com.rabbitmq.client.Channel;
 import lombok.extern.java.Log;
+import org.bson.types.ObjectId;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
@@ -48,7 +49,14 @@ public class CreateUserMessageListener implements ChannelAwareMessageListener  {
         }
     }
 
-    private void sendMessage(CreateUserMessage message) {
+    private void sendMessage(CreateUserMessage createUserMessage) {
+        ObjectId id = createUserMessage.id();
+        String username = createUserMessage.username();
+        String email = createUserMessage.email();
+        String password = createUserMessage.password();
+
+        var message = new ContinueCreateUserMessage(id, username, email, password);
+
         template.setMessageConverter(converter);
         template.setExchange(createUserBinding.getExchange());
         template.setRoutingKey(createUserBinding.getRoutingKey());
