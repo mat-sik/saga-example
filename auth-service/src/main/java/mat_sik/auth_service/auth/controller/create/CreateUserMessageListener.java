@@ -4,6 +4,8 @@ import com.rabbitmq.client.Channel;
 import lombok.extern.java.Log;
 import mat_sik.auth_service.auth.model.User;
 import mat_sik.auth_service.auth.service.UserService;
+import mat_sik.common.message.models.ContinueCreateUserMessage;
+import mat_sik.common.message.models.InitiateCreateUserCompensationTransactionMessage;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Message;

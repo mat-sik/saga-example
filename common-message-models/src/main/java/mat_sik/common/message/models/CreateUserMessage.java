@@ -1,4 +1,4 @@
-package mat_sik.saga_orchestrator.user.controller.create.start;
+package mat_sik.common.message.models;
 
 import org.bson.types.ObjectId;
 

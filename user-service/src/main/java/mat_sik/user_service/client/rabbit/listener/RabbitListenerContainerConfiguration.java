@@ -6,24 +6,19 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import mat_sik.user_service.user.controller.create.ContinueCreateUserMessage;
-import mat_sik.user_service.user.controller.create.CreateUserMessage;
 import mat_sik.user_service.user.controller.create.CreateUserMessageListener;
-import mat_sik.user_service.user.controller.delete.DeleteUserMessage;
 import mat_sik.user_service.user.controller.delete.DeleteUserMessageListener;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
-import org.springframework.amqp.support.converter.DefaultJackson2JavaTypeMapper;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 @Configuration
@@ -50,20 +45,8 @@ public class RabbitListenerContainerConfiguration {
 
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
-        var converter = new Jackson2JsonMessageConverter(objectMapper());
-        var mapper = new DefaultJackson2JavaTypeMapper();
-        mapper.setIdClassMapping(
-                Map.of(
-                        "CreateUserMessage", CreateUserMessage.class,
-                        "ContinueCreateUserMessage", ContinueCreateUserMessage.class,
-                        "DeleteUserMessage", DeleteUserMessage.class
-                )
-        );
-        mapper.setTrustedPackages("*");
-        converter.setClassMapper(mapper);
-        return converter;
+        return new Jackson2JsonMessageConverter(objectMapper());
     }
-
 
     @Bean
     public SimpleMessageListenerContainer createUserListenerContainer(

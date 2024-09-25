@@ -1,6 +1,6 @@
 package mat_sik.saga_orchestrator;
 
-import mat_sik.saga_orchestrator.user.controller.create.start.CreateUserMessage;
+import mat_sik.common.message.models.CreateUserMessage;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;

@@ -1,4 +1,4 @@
-package mat_sik.auth_service.auth.controller.create;
+package mat_sik.common.message.models;
 
 import org.bson.types.ObjectId;
 

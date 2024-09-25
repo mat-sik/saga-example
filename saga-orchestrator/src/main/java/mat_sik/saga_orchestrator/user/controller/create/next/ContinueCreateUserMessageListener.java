@@ -2,6 +2,7 @@ package mat_sik.saga_orchestrator.user.controller.create.next;
 
 import com.rabbitmq.client.Channel;
 import lombok.extern.java.Log;
+import mat_sik.common.message.models.ContinueCreateUserMessage;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;

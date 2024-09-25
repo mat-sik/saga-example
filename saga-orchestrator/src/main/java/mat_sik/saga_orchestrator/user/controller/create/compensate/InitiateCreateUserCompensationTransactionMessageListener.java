@@ -2,6 +2,8 @@ package mat_sik.saga_orchestrator.user.controller.create.compensate;
 
 import com.rabbitmq.client.Channel;
 import lombok.extern.java.Log;
+import mat_sik.common.message.models.DeleteUserMessage;
+import mat_sik.common.message.models.InitiateCreateUserCompensationTransactionMessage;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Message;

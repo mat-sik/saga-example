@@ -2,6 +2,7 @@ package mat_sik.user_service.user.controller.delete;
 
 import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
+import mat_sik.common.message.models.DeleteUserMessage;
 import mat_sik.user_service.user.service.UserService;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.core.Message;

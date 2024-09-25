@@ -2,6 +2,8 @@ package mat_sik.user_service.user.controller.create;
 
 import com.rabbitmq.client.Channel;
 import lombok.extern.java.Log;
+import mat_sik.common.message.models.ContinueCreateUserMessage;
+import mat_sik.common.message.models.CreateUserMessage;
 import mat_sik.user_service.user.model.User;
 import mat_sik.user_service.user.service.UserService;
 import org.bson.types.ObjectId;
