@@ -23,37 +23,37 @@ public class RabbitAuthTopologyConfiguration {
     }
 
     @Bean
-    public DirectExchange userDirectExchange() {
+    public DirectExchange authDirectExchange() {
         return topologyBuilder.getUserDirectExchange();
     }
 
     @Bean
-    public Queue createUserQueue() {
+    public Queue createAuthQueue() {
         return topologyBuilder.getQueue(USER_CREATE_QUEUE_NAME);
     }
 
     @Bean
-    public Binding createUserBinding() {
+    public Binding createAuthBinding() {
         return topologyBuilder.getBinding(USER_CREATE_QUEUE_NAME);
     }
 
     @Bean
-    public Queue initiateCreateUserCompensateTransactionQueue() {
+    public Queue initiateCreateAuthCompensateTransactionQueue() {
         return topologyBuilder.getQueue(USER_INITIATE_CREATE_COMPENSATE_TRANSACTION_QUEUE_NAME);
     }
 
     @Bean
-    public Binding initiateCreateUserCompensateTransactionBinding() {
+    public Binding initiateCreateAuthCompensateTransactionBinding() {
         return topologyBuilder.getBinding(USER_INITIATE_CREATE_COMPENSATE_TRANSACTION_QUEUE_NAME);
     }
 
     @Bean
-    public Queue deleteUserQueue() {
+    public Queue deleteAuthQueue() {
         return topologyBuilder.getQueue(USER_DELETE_QUEUE_NAME);
     }
 
     @Bean
-    public Binding deleteUserBinding() {
+    public Binding deleteAuthBinding() {
         return topologyBuilder.getBinding(USER_DELETE_QUEUE_NAME);
     }
 
