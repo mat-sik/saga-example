@@ -2,7 +2,6 @@ package mat_sik.saga_orchestrator.user.controller.create;
 
 import com.rabbitmq.client.Channel;
 import lombok.extern.java.Log;
-import org.bson.types.ObjectId;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
@@ -14,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Log
-public class CreateUserMessageListener implements ChannelAwareMessageListener  {
+public class CreateUserMessageListener implements ChannelAwareMessageListener {
 
     private static final boolean MULTIPLE_ACK = false;
     private static final boolean REQUEUE = true;
