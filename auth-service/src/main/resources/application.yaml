@@ -16,15 +16,16 @@ rabbit:
   virtualHost: /
   nodeAddresses: localhost:5672,localhost:5673,localhost:5674
   topology:
-    create-user:
-      exchangeName: auth-service-create-user
-      queueName: auth-service-create-user
-      routingKey: auth-service.user.new
-    compensate-create-user:
-      exchangeName: auth-service-compensate-create-user
-      queueName: auth-service-compensate-create-user
-      routingKey: auth-service.user.compensate
-    delete-user:
-      exchangeName: auth-service-delete-user
-      queueName: auth-service-delete-user
-      routingKey: auth-service.user.delete
+    exchanges:
+      user:
+        name: auth-service-user
+        queues:
+          create:
+            name: auth-service-create-user
+            routingKey: auth-service.user.create
+          initiate-create-compensate-transaction:
+            name: auth-service-initiate-create-user-transaction
+            routingKey: auth-service.user.create.initiate.compensation
+          delete:
+            name: auth-service-delete-user
+            routingKey: auth-service.user.delete

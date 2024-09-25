@@ -1,8 +1,7 @@
 package mat_sik.auth_service.client.rabbit.topology;
 
-import mat_sik.auth_service.client.rabbit.topology.properties.CompensateCreateUserTopologyProperties;
-import mat_sik.auth_service.client.rabbit.topology.properties.CreateUserTopologyProperties;
-import mat_sik.auth_service.client.rabbit.topology.properties.DeleteUserTopologyProperties;
+import mat_sik.auth_service.client.rabbit.topology.properties.ExchangeConfig;
+import mat_sik.auth_service.client.rabbit.topology.properties.UserDirectExchangeTopologyConfigurationProperty;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
@@ -12,49 +11,50 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitTopologyConfiguration {
 
-    @Bean
-    public Queue createUserQueue(CreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getQueue();
+    private static final String USER_CREATE_QUEUE_NAME = "create";
+    private static final String USER_INITIATE_CREATE_COMPENSATE_TRANSACTION_QUEUE_NAME = "initiate-create-compensate-transaction";
+    private static final String USER_DELETE_QUEUE_NAME = "delete";
+
+    private final TopologyBuilder topologyBuilder;
+
+    public RabbitTopologyConfiguration(UserDirectExchangeTopologyConfigurationProperty topologyConfigurationProperty) {
+        ExchangeConfig userExchangeConfig = topologyConfigurationProperty.user();
+        this.topologyBuilder = new TopologyBuilder(userExchangeConfig);
     }
 
     @Bean
-    public DirectExchange createUserDirectExchange(CreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getDirectExchange();
+    public DirectExchange userDirectExchange() {
+        return topologyBuilder.getUserDirectExchange();
     }
 
     @Bean
-    public Binding createUserBinding(CreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getBinding();
+    public Queue createUserQueue() {
+        return topologyBuilder.getQueue(USER_CREATE_QUEUE_NAME);
     }
 
     @Bean
-    public Queue compensateCreateUserQueue(CompensateCreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getQueue();
+    public Binding createUserBinding() {
+        return topologyBuilder.getBinding(USER_CREATE_QUEUE_NAME);
     }
 
     @Bean
-    public DirectExchange compensateCreateUserDirectExchange(CompensateCreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getDirectExchange();
+    public Queue initiateCreateUserCompensateTransactionQueue() {
+        return topologyBuilder.getQueue(USER_INITIATE_CREATE_COMPENSATE_TRANSACTION_QUEUE_NAME);
     }
 
     @Bean
-    public Binding compensateCreateUserBinding(CompensateCreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getBinding();
+    public Binding initiateCreateUserCompensateTransactionBinding() {
+        return topologyBuilder.getBinding(USER_INITIATE_CREATE_COMPENSATE_TRANSACTION_QUEUE_NAME);
     }
 
     @Bean
-    public Queue deleteUserQueue(DeleteUserTopologyProperties topologyProperties) {
-        return topologyProperties.getQueue();
+    public Queue deleteUserQueue() {
+        return topologyBuilder.getQueue(USER_DELETE_QUEUE_NAME);
     }
 
     @Bean
-    public DirectExchange deleteUserDirectExchange(DeleteUserTopologyProperties topologyProperties) {
-        return topologyProperties.getDirectExchange();
-    }
-
-    @Bean
-    public Binding deleteUserBinding(DeleteUserTopologyProperties topologyProperties) {
-        return topologyProperties.getBinding();
+    public Binding deleteUserBinding() {
+        return topologyBuilder.getBinding(USER_DELETE_QUEUE_NAME);
     }
 
 }
