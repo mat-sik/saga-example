@@ -1,8 +1,7 @@
 package mat_sik.user_service.client.rabbit.topology;
 
-import mat_sik.user_service.client.rabbit.topology.properties.ContinueTransactionCreateUserTopologyProperties;
-import mat_sik.user_service.client.rabbit.topology.properties.CreateUserTopologyProperties;
-import mat_sik.user_service.client.rabbit.topology.properties.DeleteUserTopologyProperties;
+import mat_sik.user_service.client.rabbit.topology.property.ExchangeConfig;
+import mat_sik.user_service.client.rabbit.topology.property.UserDirectExchangeTopologyConfigurationProperty;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
@@ -12,49 +11,50 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitTopologyConfiguration {
 
-    @Bean
-    public Queue createUserQueue(CreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getQueue();
+    private static final String USER_CREATE_QUEUE_NAME = "create";
+    private static final String USER_CREATE_CONTINUE_TRANSACTION_QUEUE_NAME = "create-continue-transaction";
+    private static final String USER_DELETE_QUEUE_NAME = "delete";
+
+    private final TopologyBuilder topologyBuilder;
+
+    public RabbitTopologyConfiguration(UserDirectExchangeTopologyConfigurationProperty topologyConfigurationProperty) {
+        ExchangeConfig userExchangeConfig = topologyConfigurationProperty.user();
+        this.topologyBuilder = new TopologyBuilder(userExchangeConfig);
     }
 
     @Bean
-    public DirectExchange createUserDirectExchange(CreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getDirectExchange();
+    public DirectExchange userDirectExchange() {
+        return topologyBuilder.getUserDirectExchange();
     }
 
     @Bean
-    public Binding createUserBinding(CreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getBinding();
+    public Queue createUserQueue() {
+        return topologyBuilder.getQueue(USER_CREATE_QUEUE_NAME);
     }
 
     @Bean
-    public Queue continueTransactionCreateUserQueue(ContinueTransactionCreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getQueue();
+    public Binding createUserBinding() {
+        return topologyBuilder.getBinding(USER_CREATE_QUEUE_NAME);
     }
 
     @Bean
-    public DirectExchange continueTransactionCreateDirectExchange(ContinueTransactionCreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getDirectExchange();
+    public Queue createUserContinueTransactionQueue() {
+        return topologyBuilder.getQueue(USER_CREATE_CONTINUE_TRANSACTION_QUEUE_NAME);
     }
 
     @Bean
-    public Binding continueTransactionCreateBinding(ContinueTransactionCreateUserTopologyProperties topologyProperties) {
-        return topologyProperties.getBinding();
+    public Binding createUserContinueTransactionBinding() {
+        return topologyBuilder.getBinding(USER_CREATE_CONTINUE_TRANSACTION_QUEUE_NAME);
     }
 
     @Bean
-    public Queue deleteUserQueue(DeleteUserTopologyProperties topologyProperties) {
-        return topologyProperties.getQueue();
+    public Queue deleteUserQueue() {
+        return topologyBuilder.getQueue(USER_DELETE_QUEUE_NAME);
     }
 
     @Bean
-    public DirectExchange deleteUserDirectExchange(DeleteUserTopologyProperties topologyProperties) {
-        return topologyProperties.getDirectExchange();
-    }
-
-    @Bean
-    public Binding deleteUserBinding(DeleteUserTopologyProperties topologyProperties) {
-        return topologyProperties.getBinding();
+    public Binding userDeleteBinding() {
+        return topologyBuilder.getBinding(USER_DELETE_QUEUE_NAME);
     }
 
 }

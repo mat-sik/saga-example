@@ -33,7 +33,7 @@ public class CreateUserMessageListener implements ChannelAwareMessageListener {
             UserService service,
             Jackson2JsonMessageConverter converter,
             RabbitTemplate template,
-            @Qualifier("continueTransactionCreateBinding") Binding continueTransactionBinding
+            @Qualifier("createUserContinueTransactionBinding") Binding continueTransactionBinding
     ) {
         this.service = service;
         this.converter = converter;
