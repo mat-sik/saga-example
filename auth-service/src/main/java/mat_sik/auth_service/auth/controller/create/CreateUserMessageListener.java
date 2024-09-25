@@ -48,7 +48,7 @@ public class CreateUserMessageListener implements ChannelAwareMessageListener {
         MessageProperties messageProperties = message.getMessageProperties();
         long deliveryTag = messageProperties.getDeliveryTag();
 
-        var createUserMessage = (CreateUserMessage) converter.fromMessage(message, CreateUserMessage.class);
+        var createUserMessage = (ContinueCreateUserMessage) converter.fromMessage(message, ContinueCreateUserMessage.class);
 
         try {
             performLocalTransaction(createUserMessage);
@@ -62,26 +62,26 @@ public class CreateUserMessageListener implements ChannelAwareMessageListener {
         }
     }
 
-    public void performLocalTransaction(CreateUserMessage createUserMessage) {
-        ObjectId id = createUserMessage.id();
-        String username = createUserMessage.username();
-        String email = createUserMessage.email();
-        String password = createUserMessage.password();
+    public void performLocalTransaction(ContinueCreateUserMessage continueCreateUserMessage) {
+        ObjectId id = continueCreateUserMessage.id();
+        String username = continueCreateUserMessage.username();
+        String email = continueCreateUserMessage.email();
+        String password = continueCreateUserMessage.password();
 
         service.save(new User(id, username, email, password));
     }
 
-    public void compensateDistributedTransaction(CreateUserMessage createUserMessage) {
-        ObjectId id = createUserMessage.id();
+    public void compensateDistributedTransaction(ContinueCreateUserMessage continueCreateUserMessage) {
+        ObjectId id = continueCreateUserMessage.id();
 
-        var compensateCreateUserMessage = new CompensateCreateUserMessage(id);
+        var compensateTransactionMessage = new InitiateCreateUserCompensationTransactionMessage(id);
 
         template.setMessageConverter(converter);
         template.setExchange(compensateTransactionBinding.getExchange());
         template.setRoutingKey(compensateTransactionBinding.getRoutingKey());
 
         // by default delivery mode is persistent, I don't want to handle returns so I leave mandatory as false.
-        template.convertAndSend(compensateCreateUserMessage);
+        template.convertAndSend(compensateTransactionMessage);
     }
 
 }
