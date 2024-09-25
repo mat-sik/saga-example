@@ -9,6 +9,12 @@ rabbit:
   nodeAddresses: localhost:5672,localhost:5673,localhost:5674
   topology:
     exchanges:
+      orchestrator:
+        name: saga-orchestrator
+        queues:
+          create-user:
+            name: saga-orchestrator-create-user
+            routingKey: saga-orchestrator.user.create
       user:
         name: user-service-user
         queues:
