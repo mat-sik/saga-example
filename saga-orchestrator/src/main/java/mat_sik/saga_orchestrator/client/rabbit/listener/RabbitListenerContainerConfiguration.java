@@ -6,9 +6,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import mat_sik.saga_orchestrator.user.controller.create.compensate.InitiateCreateUserCompensationTransactionMessageListener;
-import mat_sik.saga_orchestrator.user.controller.create.next.ContinueCreateUserMessageListener;
-import mat_sik.saga_orchestrator.user.controller.create.start.CreateUserMessageListener;
+import mat_sik.saga_orchestrator.user.listener.CreateInTransactionUserTaskListener;
+import mat_sik.saga_orchestrator.user.listener.UserAuthCreationFailedEventListener;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
@@ -45,16 +44,16 @@ public class RabbitListenerContainerConfiguration {
     }
 
     @Bean
-    public Jackson2JsonMessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter(objectMapper());
+    public Jackson2JsonMessageConverter messageConverter(ObjectMapper objectMapper) {
+        return new Jackson2JsonMessageConverter(objectMapper);
     }
 
     @Bean
-    public SimpleMessageListenerContainer createUserListenerContainer(
+    public SimpleMessageListenerContainer CreateInTransactionUserTaskListenerContainer(
             ConnectionFactory factory,
             ExecutorService executorService,
-            @Qualifier("orchestratorCreateUserQueue") Queue queue,
-            CreateUserMessageListener messageListener
+            @Qualifier("userTransactionalCreationQueue") Queue queue,
+            CreateInTransactionUserTaskListener messageListener
     ) {
         var container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(factory);
@@ -66,27 +65,11 @@ public class RabbitListenerContainerConfiguration {
     }
 
     @Bean
-    public SimpleMessageListenerContainer continueCreateUserListenerContainer(
+    public SimpleMessageListenerContainer UserAuthCreationFailedEventListenerContainer(
             ConnectionFactory factory,
             ExecutorService executorService,
-            @Qualifier("createUserContinueTransactionQueue") Queue queue,
-            ContinueCreateUserMessageListener messageListener
-    ) {
-        var container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(factory);
-        container.setTaskExecutor(executorService);
-        container.setQueues(queue);
-        container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
-        container.setMessageListener(messageListener);
-        return container;
-    }
-
-    @Bean
-    public SimpleMessageListenerContainer compensateCreateUserListenerContainer(
-            ConnectionFactory factory,
-            ExecutorService executorService,
-            @Qualifier("initiateCreateAuthCompensateTransactionQueue") Queue queue,
-            InitiateCreateUserCompensationTransactionMessageListener messageListener
+            @Qualifier("userCreationCompensationQueue") Queue queue,
+            UserAuthCreationFailedEventListener messageListener
     ) {
         var container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(factory);

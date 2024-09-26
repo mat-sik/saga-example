@@ -1,6 +1,6 @@
 package mat_sik.saga_orchestrator;
 
-import mat_sik.common.message.models.CreateUserMessage;
+import mat_sik.common.message.models.CreateInTransactionUserTask;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -24,7 +24,7 @@ public class SagaOrchestratorApplication {
     public CommandLineRunner commandLineRunner(
             RabbitTemplate template,
             Jackson2JsonMessageConverter converter,
-            @Qualifier("orchestratorCreateUserBinding") Binding binding
+            @Qualifier("userTransactionalCreationBinding") Binding binding
     ) {
         return _ -> {
             template.setMessageConverter(converter);
@@ -32,7 +32,7 @@ public class SagaOrchestratorApplication {
             template.setRoutingKey(binding.getRoutingKey());
 
             ObjectId id = ObjectId.get();
-            var message = new CreateUserMessage(
+            var message = new CreateInTransactionUserTask(
                     id,
                     "firstname",
                     "lastname",

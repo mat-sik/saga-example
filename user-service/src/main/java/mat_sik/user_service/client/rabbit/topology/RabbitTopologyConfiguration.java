@@ -1,60 +1,63 @@
 package mat_sik.user_service.client.rabbit.topology;
 
-import mat_sik.user_service.client.rabbit.topology.property.ExchangeConfig;
-import mat_sik.user_service.client.rabbit.topology.property.UserDirectExchangeTopologyConfigurationProperty;
+import mat_sik.user_service.client.rabbit.topology.properties.EventDirectExchangeConfigurationProperties;
+import mat_sik.user_service.client.rabbit.topology.properties.TaskDirectExchangeConfigurationProperties;
+import mat_sik.user_service.client.rabbit.topology.properties.UserCreationQueueConfigurationProperties;
+import mat_sik.user_service.client.rabbit.topology.properties.UserDeletionQueueConfigurationProperties;
+import mat_sik.user_service.client.rabbit.topology.properties.types.ExchangeConfig;
+import mat_sik.user_service.client.rabbit.topology.properties.types.QueueConfig;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class RabbitTopologyConfiguration {
 
-    private static final String USER_CREATE_QUEUE_NAME = "create";
-    private static final String USER_CREATE_CONTINUE_TRANSACTION_QUEUE_NAME = "create-continue-transaction";
-    private static final String USER_DELETE_QUEUE_NAME = "delete";
-
-    private final TopologyBuilder topologyBuilder;
-
-    public RabbitTopologyConfiguration(UserDirectExchangeTopologyConfigurationProperty topologyConfigurationProperty) {
-        ExchangeConfig userExchangeConfig = topologyConfigurationProperty.user();
-        this.topologyBuilder = new TopologyBuilder(userExchangeConfig);
+    @Bean
+    public DirectExchange taskDirectExchange(TaskDirectExchangeConfigurationProperties configurationProperties) {
+        ExchangeConfig config = configurationProperties.task();
+        return TopologyBuilder.buildDirectExchange(config);
     }
 
     @Bean
-    public DirectExchange userDirectExchange() {
-        return topologyBuilder.getUserDirectExchange();
+    public DirectExchange eventDirectExchange(EventDirectExchangeConfigurationProperties configurationProperties) {
+        ExchangeConfig config = configurationProperties.event();
+        return TopologyBuilder.buildDirectExchange(config);
     }
 
     @Bean
-    public Queue createUserQueue() {
-        return topologyBuilder.getQueue(USER_CREATE_QUEUE_NAME);
+    public Queue userCreationQueue(UserCreationQueueConfigurationProperties configurationProperties) {
+        QueueConfig config = configurationProperties.userCreation();
+        return TopologyBuilder.buildQuorumQueue(config);
     }
 
     @Bean
-    public Binding createUserBinding() {
-        return topologyBuilder.getBinding(USER_CREATE_QUEUE_NAME);
+    public Binding userCreationBinding(
+            @Qualifier("taskDirectExchange") DirectExchange taskDirectExchange,
+            @Qualifier("userCreationQueue") Queue userCreationQueue,
+            UserCreationQueueConfigurationProperties configurationProperties
+    ) {
+        QueueConfig config = configurationProperties.userCreation();
+        return TopologyBuilder.buildBinding(userCreationQueue, taskDirectExchange, config);
     }
 
     @Bean
-    public Queue createUserContinueTransactionQueue() {
-        return topologyBuilder.getQueue(USER_CREATE_CONTINUE_TRANSACTION_QUEUE_NAME);
+    public Queue userDeletionQueue(UserDeletionQueueConfigurationProperties configurationProperties) {
+        QueueConfig config = configurationProperties.userDeletion();
+        return TopologyBuilder.buildQuorumQueue(config);
     }
 
     @Bean
-    public Binding createUserContinueTransactionBinding() {
-        return topologyBuilder.getBinding(USER_CREATE_CONTINUE_TRANSACTION_QUEUE_NAME);
-    }
-
-    @Bean
-    public Queue deleteUserQueue() {
-        return topologyBuilder.getQueue(USER_DELETE_QUEUE_NAME);
-    }
-
-    @Bean
-    public Binding userDeleteBinding() {
-        return topologyBuilder.getBinding(USER_DELETE_QUEUE_NAME);
+    public Binding userDeletionBinding(
+            @Qualifier("taskDirectExchange") DirectExchange taskDirectExchange,
+            @Qualifier("userDeletionQueue") Queue userDeletionQueue,
+            UserDeletionQueueConfigurationProperties configurationProperties
+    ) {
+        QueueConfig config = configurationProperties.userDeletion();
+        return TopologyBuilder.buildBinding(userDeletionQueue, taskDirectExchange, config);
     }
 
 }

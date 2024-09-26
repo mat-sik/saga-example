@@ -6,8 +6,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import mat_sik.auth_service.auth.controller.create.CreateUserMessageListener;
-import mat_sik.auth_service.auth.controller.delete.DeleteUserMessageListener;
+import mat_sik.auth_service.auth.listener.CreateUserAuthTaskListener;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
@@ -44,16 +43,16 @@ public class RabbitListenerContainerConfiguration {
     }
 
     @Bean
-    public Jackson2JsonMessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter(objectMapper());
+    public Jackson2JsonMessageConverter messageConverter(ObjectMapper objectMapper) {
+        return new Jackson2JsonMessageConverter(objectMapper);
     }
 
     @Bean
-    public SimpleMessageListenerContainer createUserListenerContainer(
+    public SimpleMessageListenerContainer CreateUserAuthTaskListenerContainer(
             ConnectionFactory factory,
             ExecutorService executorService,
-            @Qualifier("createUserQueue") Queue queue,
-            CreateUserMessageListener messageListener
+            @Qualifier("userAuthCreationQueue") Queue queue,
+            CreateUserAuthTaskListener messageListener
     ) {
         var container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(factory);
@@ -64,19 +63,4 @@ public class RabbitListenerContainerConfiguration {
         return container;
     }
 
-    @Bean
-    public SimpleMessageListenerContainer deleteUserListenerContainer(
-            ConnectionFactory factory,
-            ExecutorService executorService,
-            @Qualifier("deleteUserQueue") Queue queue,
-            DeleteUserMessageListener messageListener
-    ) {
-        var container = new SimpleMessageListenerContainer();
-        container.setConnectionFactory(factory);
-        container.setTaskExecutor(executorService);
-        container.setQueues(queue);
-        container.setAcknowledgeMode(AcknowledgeMode.MANUAL);
-        container.setMessageListener(messageListener);
-        return container;
-    }
 }

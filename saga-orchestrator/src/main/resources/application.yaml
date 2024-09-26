@@ -9,33 +9,24 @@ rabbit:
   nodeAddresses: localhost:5672,localhost:5673,localhost:5674
   topology:
     exchanges:
-      orchestrator:
-        name: saga-orchestrator
-        queues:
-          create-user:
-            name: saga-orchestrator-create-user
-            routingKey: saga-orchestrator.user.create
-      user:
-        name: user-service-user
-        queues:
-          create:
-            name: user-service-create-user-start
-            routingKey: user-service.user.create.start
-          create-continue-transaction:
-            name: user-service-create-user-continue
-            routingKey: user-service.user.create.continue
-          delete:
-            name: user-service-delete-user
-            routingKey: user-service.user.delete
-      auth:
-        name: auth-service-user
-        queues:
-          create:
-            name: auth-service-create-user
-            routingKey: auth-service.user.create
-          initiate-create-compensate-transaction:
-            name: auth-service-initiate-create-user-transaction
-            routingKey: auth-service.user.create.initiate.compensation
-          delete:
-            name: auth-service-delete-user
-            routingKey: auth-service.user.delete
+      direct:
+        task:
+          name: task.direct.exchange
+        event:
+          name: event.direct.exchange
+    queues:
+      userTransactionalCreation:
+        name: queue.user.transactional-creation
+        routingKey: task.create-in-transaction.user
+      userCreation:
+        name: queue.user.creation
+        routingKey: task.create.user
+      userDeletion:
+        name: queue.user.deletion
+        routingKey: task.delete.user
+      userAuthCreation:
+        name: queue.user-auth.creation
+        routingKey: task.create.user-auth
+      userCreationCompensation:
+        name: queue.user.creation-compensation
+        routingKey: event.user-auth.creation-fail

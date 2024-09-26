@@ -17,15 +17,15 @@ rabbit:
   nodeAddresses: localhost:5672,localhost:5673,localhost:5674
   topology:
     exchanges:
-      user:
-        name: auth-service-user
-        queues:
-          create:
-            name: auth-service-create-user
-            routingKey: auth-service.user.create
-          initiate-create-compensate-transaction:
-            name: auth-service-initiate-create-user-transaction
-            routingKey: auth-service.user.create.initiate.compensation
-          delete:
-            name: auth-service-delete-user
-            routingKey: auth-service.user.delete
+      direct:
+        task:
+          name: task.direct.exchange
+        event:
+          name: event.direct.exchange
+    queues:
+      userAuthCreation:
+        name: queue.user-auth.creation
+        routingKey: task.create.user-auth
+      userCreationCompensation:
+        name: queue.user.creation-compensation
+        routingKey: event.user-auth.creation-fail

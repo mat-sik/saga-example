@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
-import mat_sik.user_service.user.controller.create.CreateUserMessageListener;
-import mat_sik.user_service.user.controller.delete.DeleteUserMessageListener;
+import mat_sik.user_service.user.listener.CreateUserMessageListener;
+import mat_sik.user_service.user.listener.DeleteUserTaskListener;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.core.AcknowledgeMode;
 import org.springframework.amqp.core.Queue;
@@ -44,15 +44,15 @@ public class RabbitListenerContainerConfiguration {
     }
 
     @Bean
-    public Jackson2JsonMessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter(objectMapper());
+    public Jackson2JsonMessageConverter messageConverter(ObjectMapper objectMapper) {
+        return new Jackson2JsonMessageConverter(objectMapper);
     }
 
     @Bean
-    public SimpleMessageListenerContainer createUserListenerContainer(
+    public SimpleMessageListenerContainer CreateUserMessageListenerContainer(
             ConnectionFactory factory,
             ExecutorService executorService,
-            @Qualifier("createUserQueue") Queue queue,
+            @Qualifier("userCreationQueue") Queue queue,
             CreateUserMessageListener messageListener
     ) {
         var container = new SimpleMessageListenerContainer();
@@ -65,11 +65,11 @@ public class RabbitListenerContainerConfiguration {
     }
 
     @Bean
-    public SimpleMessageListenerContainer deleteUserListenerContainer(
+    public SimpleMessageListenerContainer DeleteUserTaskListenerContainer(
             ConnectionFactory factory,
             ExecutorService executorService,
-            @Qualifier("deleteUserQueue") Queue queue,
-            DeleteUserMessageListener messageListener
+            @Qualifier("userDeletionQueue") Queue queue,
+            DeleteUserTaskListener messageListener
     ) {
         var container = new SimpleMessageListenerContainer();
         container.setConnectionFactory(factory);
