@@ -6,7 +6,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("users")
-public record User(
+public record UserAuth(
         @Id ObjectId id,
         @Indexed(unique = true) String email,
         @Indexed(unique = true) String username,

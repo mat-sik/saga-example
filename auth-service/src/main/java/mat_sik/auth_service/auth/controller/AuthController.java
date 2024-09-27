@@ -3,7 +3,7 @@ package mat_sik.auth_service.auth.controller;
 import com.rabbitmq.client.Channel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.java.Log;
-import mat_sik.auth_service.auth.model.User;
+import mat_sik.auth_service.auth.model.UserAuth;
 import mat_sik.auth_service.auth.service.UserService;
 import mat_sik.common.message.models.CreateUserAuthTask;
 import mat_sik.common.message.models.UserAuthCreationFailedEvent;
@@ -60,7 +60,7 @@ public class AuthController {
         String email = createUserAuthTask.email();
         String password = createUserAuthTask.password();
 
-        service.save(new User(id, username, email, password));
+        service.save(new UserAuth(id, username, email, password));
     }
 
     public void compensateDistributedTransaction(CreateUserAuthTask createUserAuthTask) {

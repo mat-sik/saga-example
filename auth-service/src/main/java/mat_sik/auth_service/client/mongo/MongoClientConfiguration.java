@@ -2,7 +2,7 @@ package mat_sik.auth_service.client.mongo;
 
 import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
-import mat_sik.auth_service.auth.model.User;
+import mat_sik.auth_service.auth.model.UserAuth;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mapping.context.MappingContext;
@@ -66,8 +66,8 @@ public class MongoClientConfiguration {
 
         IndexResolver resolver = new MongoPersistentEntityIndexResolver(mappingContext);
 
-        IndexOperations indexOps = mongoTemplate.indexOps(User.class);
-        resolver.resolveIndexFor(User.class).forEach(indexOps::ensureIndex);
+        IndexOperations indexOps = mongoTemplate.indexOps(UserAuth.class);
+        resolver.resolveIndexFor(UserAuth.class).forEach(indexOps::ensureIndex);
     }
 
 }
