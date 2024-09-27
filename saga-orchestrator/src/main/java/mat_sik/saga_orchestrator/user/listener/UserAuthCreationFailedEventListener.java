@@ -4,7 +4,6 @@ import com.rabbitmq.client.Channel;
 import lombok.extern.java.Log;
 import mat_sik.common.message.models.DeleteUserTask;
 import mat_sik.common.message.models.UserAuthCreationFailedEvent;
-import mat_sik.saga_orchestrator.client.rabbit.listener.MessageSender;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.Message;
@@ -15,6 +14,8 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import java.time.Duration;
+
 @Component
 @Log
 public class UserAuthCreationFailedEventListener implements ChannelAwareMessageListener {
@@ -23,7 +24,7 @@ public class UserAuthCreationFailedEventListener implements ChannelAwareMessageL
     private static final boolean REQUEUE = true;
 
     private final Jackson2JsonMessageConverter converter;
-    private final MessageSender messageSender;
+    private final RabbitTemplate template;
 
     private final Binding userDeletionBinding;
 
@@ -33,7 +34,7 @@ public class UserAuthCreationFailedEventListener implements ChannelAwareMessageL
             @Qualifier("userDeletionBinding") Binding userDeletionBinding
     ) {
         this.converter = converter;
-        this.messageSender = new MessageSender(template, converter);
+        this.template = template;
         this.userDeletionBinding = userDeletionBinding;
     }
 
@@ -49,12 +50,23 @@ public class UserAuthCreationFailedEventListener implements ChannelAwareMessageL
         var deleteUserTask = new DeleteUserTask(id);
 
         try {
-            messageSender.send(userDeletionBinding, deleteUserTask);
+            sendMessage(deleteUserTask);
             channel.basicAck(deliveryTag, MULTIPLE_ACK);
         } catch (Exception ex) {
             channel.basicNack(deliveryTag, MULTIPLE_ACK, REQUEUE);
             log.severe(ex.getMessage());
         }
+    }
+
+    public void sendMessage(DeleteUserTask task) {
+        String targetExchangeName = userDeletionBinding.getExchange();
+        String targetRoutingKey = userDeletionBinding.getRoutingKey();
+
+        template.invoke(t -> {
+            t.convertAndSend(targetExchangeName, targetRoutingKey, task);
+            t.waitForConfirmsOrDie(Duration.ofSeconds(10).toMillis());
+            return true;
+        });
     }
 
 }

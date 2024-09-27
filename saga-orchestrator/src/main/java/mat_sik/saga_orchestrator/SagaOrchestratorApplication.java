@@ -4,7 +4,6 @@ import mat_sik.common.message.models.CreateInTransactionUserTask;
 import org.bson.types.ObjectId;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -23,11 +22,9 @@ public class SagaOrchestratorApplication {
     @Bean
     public CommandLineRunner commandLineRunner(
             RabbitTemplate template,
-            Jackson2JsonMessageConverter converter,
             @Qualifier("userTransactionalCreationBinding") Binding binding
     ) {
         return _ -> {
-            template.setMessageConverter(converter);
             template.setExchange(binding.getExchange());
             template.setRoutingKey(binding.getRoutingKey());
 

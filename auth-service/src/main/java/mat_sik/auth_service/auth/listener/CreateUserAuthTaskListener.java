@@ -4,7 +4,6 @@ import com.rabbitmq.client.Channel;
 import lombok.extern.java.Log;
 import mat_sik.auth_service.auth.model.User;
 import mat_sik.auth_service.auth.service.UserService;
-import mat_sik.auth_service.client.rabbit.listener.MessageSender;
 import mat_sik.common.message.models.CreateUserAuthTask;
 import mat_sik.common.message.models.UserAuthCreationFailedEvent;
 import org.bson.types.ObjectId;
@@ -19,6 +18,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.Duration;
 
 @Component
 @Log
@@ -30,7 +30,7 @@ public class CreateUserAuthTaskListener implements ChannelAwareMessageListener {
     private final UserService service;
     private final Jackson2JsonMessageConverter converter;
     private final Binding compensateTransactionBinding;
-    private final MessageSender messageSender;
+    private final RabbitTemplate template;
 
     public CreateUserAuthTaskListener(
             UserService service,
@@ -41,7 +41,7 @@ public class CreateUserAuthTaskListener implements ChannelAwareMessageListener {
         this.service = service;
         this.converter = converter;
         this.compensateTransactionBinding = compensateTransactionBinding;
-        this.messageSender = new MessageSender(template, converter);
+        this.template = template;
     }
 
     @Override
@@ -75,7 +75,14 @@ public class CreateUserAuthTaskListener implements ChannelAwareMessageListener {
     public void compensateDistributedTransaction(CreateUserAuthTask createUserAuthTask) {
         ObjectId id = createUserAuthTask.id();
         var userAuthCreationFailedEvent = new UserAuthCreationFailedEvent(id);
-        messageSender.send(compensateTransactionBinding, userAuthCreationFailedEvent);
+
+        String targetExchangeName = compensateTransactionBinding.getExchange();
+        String targetRoutingKey = compensateTransactionBinding.getRoutingKey();
+        template.invoke(t -> {
+            t.convertAndSend(targetExchangeName, targetRoutingKey, userAuthCreationFailedEvent);
+            t.waitForConfirmsOrDie(Duration.ofSeconds(10).toMillis());
+            return true;
+        });
     }
 
 }
