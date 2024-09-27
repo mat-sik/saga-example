@@ -46,7 +46,7 @@ public class AuthController {
             performLocalTransaction(task);
             channel.basicAck(deliveryTag, MULTIPLE_ACK);
         } catch (DuplicateKeyException ex) {
-            compensateDistributedTransaction(task);
+            SendUserCreationFailedEvent(task);
             channel.basicAck(deliveryTag, MULTIPLE_ACK);
         } catch (Exception ex) {
             channel.basicNack(deliveryTag, MULTIPLE_ACK, REQUEUE);
@@ -63,7 +63,7 @@ public class AuthController {
         service.save(new UserAuth(id, username, email, password));
     }
 
-    public void compensateDistributedTransaction(CreateUserAuthTask createUserAuthTask) {
+    public void SendUserCreationFailedEvent(CreateUserAuthTask createUserAuthTask) {
         ObjectId id = createUserAuthTask.id();
         var userAuthCreationFailedEvent = new UserAuthCreationFailedEvent(id);
 

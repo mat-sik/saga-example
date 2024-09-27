@@ -55,7 +55,7 @@ public class UserController {
         var createUserAuthTask = new CreateUserAuthTask(id, username, email, password);
 
         try {
-            sendTransactionTasks(createUserTask, createUserAuthTask);
+            sendCreateUserInTransactionMessage(createUserTask, createUserAuthTask);
             channel.basicAck(deliveryTag, MULTIPLE_ACK);
         } catch (Exception ex) {
             channel.basicNack(deliveryTag, MULTIPLE_ACK, REQUEUE);
@@ -63,7 +63,10 @@ public class UserController {
         }
     }
 
-    private void sendTransactionTasks(CreateUserTask createUserTask, CreateUserAuthTask createUserAuthTask) {
+    private void sendCreateUserInTransactionMessage(
+            CreateUserTask createUserTask,
+            CreateUserAuthTask createUserAuthTask
+    ) {
         String userCreationExchangeName = userCreationBinding.getExchange();
         String userCreationRoutingKey = userCreationBinding.getRoutingKey();
 
@@ -94,7 +97,7 @@ public class UserController {
         var deleteUserTask = new DeleteUserTask(id);
 
         try {
-            sendMessage(deleteUserTask);
+            sendDeleterUserMessage(deleteUserTask);
             channel.basicAck(deliveryTag, MULTIPLE_ACK);
         } catch (Exception ex) {
             channel.basicNack(deliveryTag, MULTIPLE_ACK, REQUEUE);
@@ -102,7 +105,7 @@ public class UserController {
         }
     }
 
-    public void sendMessage(DeleteUserTask task) {
+    public void sendDeleterUserMessage(DeleteUserTask task) {
         String targetExchangeName = userDeletionBinding.getExchange();
         String targetRoutingKey = userDeletionBinding.getRoutingKey();
 
