@@ -9,7 +9,6 @@ import mat_sik.auth_service.client.rabbit.topology.properties.types.QueueConfig;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -36,8 +35,8 @@ public class RabbitTopologyConfiguration {
 
     @Bean
     public Binding userAuthCreationBinding(
-            @Qualifier("taskDirectExchange") DirectExchange taskDirectExchange,
-            @Qualifier("userAuthCreationQueue") Queue userAuthCreationQueue,
+            DirectExchange taskDirectExchange,
+            Queue userAuthCreationQueue,
             UserAuthCreationQueueConfigurationProperties configurationProperties
     ) {
         QueueConfig config = configurationProperties.userAuthCreation();
@@ -52,8 +51,8 @@ public class RabbitTopologyConfiguration {
 
     @Bean
     public Binding userCreationCompensationBinding(
-            @Qualifier("eventDirectExchange") DirectExchange eventDirectExchange,
-            @Qualifier("userCreationCompensationQueue") Queue userCreationCompensationQueue,
+            DirectExchange eventDirectExchange,
+            Queue userCreationCompensationQueue,
             UserCreationCompensationQueueConfigurationProperties configurationProperties
     ) {
         QueueConfig config = configurationProperties.userCreationCompensation();

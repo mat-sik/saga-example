@@ -14,6 +14,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.core.task.support.TaskExecutorAdapter;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -25,6 +27,11 @@ public class RabbitClientConfiguration {
     @Bean
     public ExecutorService virtualExecutorService() {
         return Executors.newVirtualThreadPerTaskExecutor();
+    }
+
+    @Bean
+    public TaskExecutor virtualThreadTaskExecutor(ExecutorService virtualExecutorService) {
+        return new TaskExecutorAdapter(virtualExecutorService);
     }
 
     @Bean

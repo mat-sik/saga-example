@@ -9,7 +9,6 @@ import mat_sik.user_service.client.rabbit.topology.properties.types.QueueConfig;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -36,8 +35,8 @@ public class RabbitTopologyConfiguration {
 
     @Bean
     public Binding userCreationBinding(
-            @Qualifier("taskDirectExchange") DirectExchange taskDirectExchange,
-            @Qualifier("userCreationQueue") Queue userCreationQueue,
+            DirectExchange taskDirectExchange,
+            Queue userCreationQueue,
             UserCreationQueueConfigurationProperties configurationProperties
     ) {
         QueueConfig config = configurationProperties.userCreation();
@@ -52,8 +51,8 @@ public class RabbitTopologyConfiguration {
 
     @Bean
     public Binding userDeletionBinding(
-            @Qualifier("taskDirectExchange") DirectExchange taskDirectExchange,
-            @Qualifier("userDeletionQueue") Queue userDeletionQueue,
+            DirectExchange taskDirectExchange,
+            Queue userDeletionQueue,
             UserDeletionQueueConfigurationProperties configurationProperties
     ) {
         QueueConfig config = configurationProperties.userDeletion();

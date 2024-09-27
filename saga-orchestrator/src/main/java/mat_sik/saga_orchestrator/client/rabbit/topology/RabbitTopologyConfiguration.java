@@ -12,7 +12,6 @@ import mat_sik.saga_orchestrator.client.rabbit.topology.properties.types.QueueCo
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.core.Queue;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -39,8 +38,8 @@ public class RabbitTopologyConfiguration {
 
     @Bean
     public Binding userCreationBinding(
-            @Qualifier("taskDirectExchange") DirectExchange taskDirectExchange,
-            @Qualifier("userCreationQueue") Queue userCreationQueue,
+            DirectExchange taskDirectExchange,
+            Queue userCreationQueue,
             UserCreationQueueConfigurationProperties configurationProperties
     ) {
         QueueConfig config = configurationProperties.userCreation();
@@ -55,8 +54,8 @@ public class RabbitTopologyConfiguration {
 
     @Bean
     public Binding userDeletionBinding(
-            @Qualifier("taskDirectExchange") DirectExchange taskDirectExchange,
-            @Qualifier("userDeletionQueue") Queue userDeletionQueue,
+            DirectExchange taskDirectExchange,
+            Queue userDeletionQueue,
             UserDeletionQueueConfigurationProperties configurationProperties
     ) {
         QueueConfig config = configurationProperties.userDeletion();
@@ -71,8 +70,8 @@ public class RabbitTopologyConfiguration {
 
     @Bean
     public Binding userAuthCreationBinding(
-            @Qualifier("taskDirectExchange") DirectExchange taskDirectExchange,
-            @Qualifier("userAuthCreationQueue") Queue userAuthCreationQueue,
+            DirectExchange taskDirectExchange,
+            Queue userAuthCreationQueue,
             UserAuthCreationQueueConfigurationProperties configurationProperties
     ) {
         QueueConfig config = configurationProperties.userAuthCreation();
@@ -87,8 +86,8 @@ public class RabbitTopologyConfiguration {
 
     @Bean
     public Binding userCreationCompensationBinding(
-            @Qualifier("eventDirectExchange") DirectExchange eventDirectExchange,
-            @Qualifier("userCreationCompensationQueue") Queue userCreationCompensationQueue,
+            DirectExchange eventDirectExchange,
+            Queue userCreationCompensationQueue,
             UserCreationCompensationQueueConfigurationProperties configurationProperties
     ) {
         QueueConfig config = configurationProperties.userCreationCompensation();
@@ -103,8 +102,8 @@ public class RabbitTopologyConfiguration {
 
     @Bean
     public Binding userTransactionalCreationBinding(
-            @Qualifier("taskDirectExchange") DirectExchange taskDirectExchange,
-            @Qualifier("userTransactionalCreationQueue") Queue userTransactionalCreationQueue,
+            DirectExchange taskDirectExchange,
+            Queue userTransactionalCreationQueue,
             UserTransactionalCreationQueueConfigurationProperties configurationProperties
     ) {
         QueueConfig config = configurationProperties.userTransactionalCreation();
