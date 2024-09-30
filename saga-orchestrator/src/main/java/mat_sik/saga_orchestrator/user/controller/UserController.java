@@ -97,7 +97,7 @@ public class UserController {
         var deleteUserTask = new DeleteUserTask(id);
 
         try {
-            sendDeleterUserMessage(deleteUserTask);
+            sendDeleteUserMessage(deleteUserTask);
             channel.basicAck(deliveryTag, MULTIPLE_ACK);
         } catch (Exception ex) {
             channel.basicNack(deliveryTag, MULTIPLE_ACK, REQUEUE);
@@ -105,7 +105,7 @@ public class UserController {
         }
     }
 
-    public void sendDeleterUserMessage(DeleteUserTask task) {
+    public void sendDeleteUserMessage(DeleteUserTask task) {
         String targetExchangeName = userDeletionBinding.getExchange();
         String targetRoutingKey = userDeletionBinding.getRoutingKey();
 
