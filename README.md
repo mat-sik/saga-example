@@ -61,7 +61,18 @@ The workflow has two possible outcomes:
 
 ## **Key Concepts**
 
+### **Topology**
+
+- **Exchanges**
+    - One global **Exchange** for different tasks called `task.direct.exchange`
+    - One global **Exchange** for different events called `event.direct.exchange`
+- **Queues**
+    - I follow the convention of having a single **Queue** for each **Message type**, whether it's an **Event** or a
+      **Task**.
+
 ### **Tasks and Events**
+
+Message types I distinguish.
 
 - **Tasks**:
     - Represent actions that modify a service's state.
@@ -78,9 +89,12 @@ The workflow has two possible outcomes:
 - **Exchange**: Determines the message exchange type.
     - Format: `[task/event].[type].exchange`.
     - Example: `task.direct.exchange`.
-- **Queue**: Defines the queue name for consumers.
+- **Queue**: Defines the queue name for consumers. Queue name represents queue usage.
     - Format: `queue.[entity-name].[action]`.
-    - Example: `queue.user.create`.
+    - Note`action` can be multi word like `creation-compensation`.
+    - Example:
+        - `queue.user.creation`
+        - `queue.user.creation-compensation`
 
 ### **Purpose of Naming**
 
@@ -88,12 +102,11 @@ The workflow has two possible outcomes:
 - Event names communicate state changes to other services.
 - Entity names determine which services should handle tasks or events.
 
-### **Parallel Messaging and Replay**
+### **Event notification pattern**
 
 - The **event.direct.exchange** is an example of the **event notification pattern**, where events are created in a
   decoupled manner.
 - This allows any consumer to inspect and react to them as needed.
-- By placing client messages on a queue, tasks can be replayed in case the orchestrator fails.
 
 ---
 
@@ -111,10 +124,18 @@ The architecture and workflow are illustrated in the diagram below:
 
 - Centralized control via an orchestrator service.
 - The orchestrator directs the workflow by publishing tasks and reacting to events.
+    - More Code
+    - More architecture to manage - whole additional service
+    - More scalable - works better when there are many services. Only one service and orchestrator service interact.
+    - Easier to collaborate between teams, every team needs to additionally think only about orchestrator service.
 
 ### **Choreography Saga**
 
 - Decentralized control where services react to events and trigger actions independently.
+    - Less Code
+    - No additional architecture
+    - Harder to maintain, interactions can be scattered between many different services.
+    - Harder collaborate between teams, because every service can possibly influence every other service.
 
 ---
 
@@ -123,16 +144,3 @@ The architecture and workflow are illustrated in the diagram below:
 - **Java**: Spring Boot framework for building microservices.
 - **RabbitMQ**: Message broker for managing communication between services.
 - **Draw.io**: Used to create the system design diagram.
-
----
-
-## **Future Improvements**
-
-- Add more services to demonstrate complex workflows.
-- Implement the **Choreography Saga** pattern for comparison.
-- Add persistent storage for events to ensure reliability in case of orchestrator failures.
-- Include end-to-end testing and monitoring tools.
-
----
-
-Feel free to explore the project and contribute!
